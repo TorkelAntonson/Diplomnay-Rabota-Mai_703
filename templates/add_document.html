@@ -1,0 +1,559 @@
+<!-- templates/add_document.html (обновленная версия) -->
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Добавить документ - Requirements Generator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #fafafa 0%, #a24b4f 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #bc0000 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2em;
+            margin-bottom: 5px;
+        }
+        
+        .nav {
+            background: #34495e;
+            padding: 10px 20px;
+            display: flex;
+            gap: 15px;
+        }
+        
+        .nav a {
+            color: white;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            transition: background 0.3s;
+        }
+        
+        .nav a:hover {
+            background: rgba(255,255,255,0.1);
+        }
+        
+        .nav a.active {
+            background: #bc0000;
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        .upload-area {
+            border: 3px dashed #bc0000;
+            border-radius: 10px;
+            padding: 40px;
+            text-align: center;
+            margin-bottom: 30px;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+        
+        .upload-area:hover {
+            border-color: #2980b9;
+            background: #e8f4fc;
+        }
+        
+        .upload-area.dragover {
+            border-color: #27ae60;
+            background: #e8f6f3;
+        }
+        
+        .upload-icon {
+            font-size: 4em;
+            color: #bc0000;
+            margin-bottom: 20px;
+        }
+        
+        .file-input {
+            display: none;
+        }
+        
+        .browse-btn {
+            background: #bc0000;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.1em;
+            transition: background 0.3s ease;
+            margin: 10px;
+        }
+        
+        .browse-btn:hover {
+            background: #2980b9;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #bdc3c7;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 1em;
+            resize: vertical;
+            min-height: 80px;
+        }
+        
+        .add-btn {
+            background: #27ae60;
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.2em;
+            transition: background 0.3s ease;
+            width: 100%;
+            margin-top: 20px;
+        }
+        
+        .add-btn:hover:not(:disabled) {
+            background: #219a52;
+        }
+        
+        .add-btn:disabled {
+            background: #95a5a6;
+            cursor: not-allowed;
+        }
+        
+        .file-info {
+            margin-top: 20px;
+            padding: 15px;
+            background: #e8f4fc;
+            border-radius: 8px;
+            display: none;
+        }
+        
+        .status-area {
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            display: none;
+        }
+        
+        .status-success {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+        }
+        
+        .status-error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        
+        .supported-formats {
+            text-align: center;
+            margin-top: 20px;
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+        
+        .documents-list {
+            margin-top: 40px;
+        }
+        
+        .documents-list h3 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #ecf0f1;
+        }
+        
+        .document-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            border: 1px solid #ecf0f1;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            background: #f8f9fa;
+        }
+        
+        .document-info {
+            flex: 1;
+        }
+        
+        .document-name {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        
+        .document-meta {
+            font-size: 0.9em;
+            color: #7f8c8d;
+            margin-top: 5px;
+        }
+        
+        .delete-btn {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: background 0.3s ease;
+        }
+        
+        .delete-btn:hover {
+            background: #c0392b;
+        }
+        
+        .no-documents {
+            text-align: center;
+            color: #7f8c8d;
+            padding: 40px;
+            font-style: italic;
+        }
+        
+        .refresh-btn {
+            background: #bc0000;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            margin-bottom: 15px;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Добавить документ</h1>
+            <p>Добавьте документы в базу знаний для RAG чата</p>
+        </div>
+        
+        <div class="nav">
+            <a href="/">Главная</a>
+            <a href="/rag-chat">RAG Чат</a>
+            <a href="/add-document" class="active">Добавить документ</a>
+        </div>
+        
+        <div class="content">
+            <div class="upload-area" id="uploadArea">
+                <div class="upload-icon"></div>
+                <h3>Перетащите документ сюда</h3>
+                <p>или</p>
+                <button class="browse-btn" onclick="document.getElementById('fileInput').click()">
+                    Выберите файл
+                </button>
+                <input type="file" id="fileInput" class="file-input" accept=".txt,.pdf,.docx,.doc">
+            </div>
+            
+            <div class="file-info" id="fileInfo">
+                <strong>Выбранный файл:</strong> 
+                <span id="fileName"></span>
+                <br>
+                <small>Размер: <span id="fileSize"></span></small>
+            </div>
+            
+            <div class="form-group">
+                <label for="description">Описание документа (опционально):</label>
+                <textarea id="description" placeholder="Введите краткое описание документа..."></textarea>
+            </div>
+            
+            <button class="add-btn" id="addBtn" disabled onclick="addDocument()">
+                ➕ Добавить в базу знаний
+            </button>
+            
+            <div class="status-area" id="statusArea">
+                <div id="statusContent"></div>
+            </div>
+            
+            <div class="supported-formats">
+                Поддерживаемые форматы: .txt, .pdf, .docx, .doc<br>
+                Документы будут разбиты на фрагменты до 100 строк для лучшего поиска
+            </div>
+            
+            <div class="documents-list">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <h3>Документы в базе знаний</h3>
+                    <button class="refresh-btn" onclick="loadDocuments()">🔄 Обновить</button>
+                </div>
+                <div id="documentsContainer">
+                    <div class="no-documents">Загрузка документов...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const fileInfo = document.getElementById('fileInfo');
+        const fileName = document.getElementById('fileName');
+        const fileSize = document.getElementById('fileSize');
+        const addBtn = document.getElementById('addBtn');
+        const statusArea = document.getElementById('statusArea');
+        const statusContent = document.getElementById('statusContent');
+        const description = document.getElementById('description');
+        const documentsContainer = document.getElementById('documentsContainer');
+        
+        let currentFile = null;
+        
+        // Загружаем документы при загрузке страницы
+        document.addEventListener('DOMContentLoaded', loadDocuments);
+        
+        // Обработчики drag & drop
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            uploadArea.addEventListener(eventName, preventDefaults, false);
+        });
+        
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        
+        ['dragenter', 'dragover'].forEach(eventName => {
+            uploadArea.addEventListener(eventName, highlight, false);
+        });
+        
+        ['dragleave', 'drop'].forEach(eventName => {
+            uploadArea.addEventListener(eventName, unhighlight, false);
+        });
+        
+        function highlight() {
+            uploadArea.classList.add('dragover');
+        }
+        
+        function unhighlight() {
+            uploadArea.classList.remove('dragover');
+        }
+        
+        uploadArea.addEventListener('drop', handleDrop, false);
+        
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            handleFiles(files);
+        }
+        
+        fileInput.addEventListener('change', function() {
+            handleFiles(this.files);
+        });
+        
+        function handleFiles(files) {
+            if (files.length > 0) {
+                const file = files[0];
+                if (isValidFileType(file)) {
+                    currentFile = file;
+                    displayFileInfo(file);
+                    addBtn.disabled = false;
+                } else {
+                    showStatus('error', 'Пожалуйста, выберите файл с расширением .txt, .pdf, .docx или .doc');
+                    resetFileSelection();
+                }
+            }
+        }
+        
+        function isValidFileType(file) {
+            const validExtensions = ['.txt', '.pdf', '.docx', '.doc'];
+            const fileName = file.name.toLowerCase();
+            return validExtensions.some(ext => fileName.endsWith(ext));
+        }
+        
+        function displayFileInfo(file) {
+            fileName.textContent = file.name;
+            fileSize.textContent = formatFileSize(file.size);
+            fileInfo.style.display = 'block';
+        }
+        
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+        
+        function resetFileSelection() {
+            currentFile = null;
+            fileInput.value = '';
+            fileInfo.style.display = 'none';
+            addBtn.disabled = true;
+            description.value = '';
+        }
+        
+        async function addDocument() {
+            if (!currentFile) return;
+            
+            addBtn.disabled = true;
+            addBtn.textContent = '⏳ Добавление...';
+            
+            const formData = new FormData();
+            formData.append('file', currentFile);
+            formData.append('description', description.value);
+            
+            showStatus('processing', 'Добавление документа в базу знаний...');
+            
+            try {
+                const response = await fetch('/api/rag/add-document', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (result.status === 'success') {
+                    showStatus('success', `
+                        <h3>✅ Документ добавлен!</h3>
+                        <p>${result.message}</p>
+                        <button class="browse-btn" onclick="resetForm()">Добавить еще один документ</button>
+                    `);
+                    resetFileSelection();
+                    loadDocuments(); // Обновляем список документов
+                } else {
+                    throw new Error(result.message || 'Произошла ошибка');
+                }
+            } catch (error) {
+                showStatus('error', `
+                    <h3>❌ Ошибка</h3>
+                    <p>${error.message}</p>
+                    <button class="browse-btn" onclick="resetForm()">Попробовать снова</button>
+                `);
+            }
+            
+            addBtn.disabled = false;
+            addBtn.textContent = '➕ Добавить в базу знаний';
+        }
+        
+        async function loadDocuments() {
+            try {
+                const response = await fetch('/api/rag/documents');
+                const result = await response.json();
+                
+                if (result.status === 'success') {
+                    displayDocuments(result.documents);
+                } else {
+                    throw new Error(result.message);
+                }
+            } catch (error) {
+                documentsContainer.innerHTML = `
+                    <div class="no-documents">
+                        Ошибка загрузки документов: ${error.message}
+                    </div>
+                `;
+            }
+        }
+        
+        function displayDocuments(documents) {
+            if (documents.length === 0) {
+                documentsContainer.innerHTML = `
+                    <div class="no-documents">
+                        В базе знаний пока нет документов
+                    </div>
+                `;
+                return;
+            }
+            
+            let html = '';
+            documents.forEach(doc => {
+                html += `
+                    <div class="document-item">
+                        <div class="document-info">
+                            <div class="document-name">${doc.filename}</div>
+                            <div class="document-meta">
+                                ${doc.description ? `Описание: ${doc.description} • ` : ''}
+                                Тип: ${doc.type} • 
+                                Чанков: ${doc.chunk_count || 1}
+                            </div>
+                        </div>
+                        <button class="delete-btn" onclick="deleteDocument('${doc.filename}')">
+                            🗑️ Удалить
+                        </button>
+                    </div>
+                `;
+            });
+            
+            documentsContainer.innerHTML = html;
+        }
+        
+        async function deleteDocument(filename) {
+            if (!confirm(`Вы уверены, что хотите удалить документ "${filename}"?`)) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/api/rag/delete-document/${encodeURIComponent(filename)}`, {
+                    method: 'DELETE'
+                });
+                
+                const result = await response.json();
+                
+                if (result.status === 'success') {
+                    showStatus('success', `
+                        <h3>✅ Документ удален!</h3>
+                        <p>${result.message}</p>
+                    `);
+                    loadDocuments(); // Обновляем список документов
+                } else {
+                    throw new Error(result.message);
+                }
+            } catch (error) {
+                showStatus('error', `
+                    <h3>❌ Ошибка удаления</h3>
+                    <p>${error.message}</p>
+                `);
+            }
+        }
+        
+        function showStatus(type, content) {
+            statusArea.className = 'status-area status-' + type;
+            statusContent.innerHTML = content;
+            statusArea.style.display = 'block';
+        }
+        
+        function resetForm() {
+            resetFileSelection();
+            statusArea.style.display = 'none';
+        }
+    </script>
+</body>
+</html>

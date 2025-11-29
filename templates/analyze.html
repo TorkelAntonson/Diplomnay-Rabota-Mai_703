@@ -1,0 +1,415 @@
+<!-- templates/index.html -->
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Requirements Generator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #fafafa 0%, #a24b4f 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #bc0000 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .nav {
+            background: #34495e;
+            padding: 10px 20px;
+            display: flex;
+            gap: 15px;
+        }
+        
+        .nav a {
+            color: white;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            transition: background 0.3s;
+        }
+        
+        .nav a:hover {
+            background: rgba(255,255,255,0.1);
+        }
+        
+        .nav a.active {
+            background: #bc0000;
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        .upload-area {
+            border: 3px dashed #bc0000;
+            border-radius: 10px;
+            padding: 40px;
+            text-align: center;
+            margin-bottom: 30px;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+        
+        .upload-area:hover {
+            border-color: #2980b9;
+            background: #e8f4fc;
+        }
+        
+        .upload-area.dragover {
+            border-color: #27ae60;
+            background: #e8f6f3;
+        }
+        
+        .upload-icon {
+            font-size: 4em;
+            color: #bc0000;
+            margin-bottom: 20px;
+        }
+        
+        .file-input {
+            display: none;
+        }
+        
+        .browse-btn {
+            background: #bc0000;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.1em;
+            transition: background 0.3s ease;
+            margin: 10px;
+        }
+        
+        .browse-btn:hover {
+            background: #2980b9;
+        }
+        
+        .analyze-btn {
+            background: #27ae60;
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.2em;
+            transition: background 0.3s ease;
+            width: 100%;
+            margin-top: 20px;
+        }
+        
+        .analyze-btn:hover:not(:disabled) {
+            background: #219a52;
+        }
+        
+        .analyze-btn:disabled {
+            background: #95a5a6;
+            cursor: not-allowed;
+        }
+        
+        .file-info {
+            margin-top: 20px;
+            padding: 15px;
+            background: #e8f4fc;
+            border-radius: 8px;
+            display: none;
+        }
+        
+        .status-area {
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            display: none;
+        }
+        
+        .status-processing {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+        }
+        
+        .status-success {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+        }
+        
+        .status-error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #bc0000;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 2s linear infinite;
+            margin: 0 auto 15px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .download-btn {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.1em;
+            transition: background 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 15px;
+        }
+        
+        .download-btn:hover {
+            background: #c0392b;
+        }
+        
+        .supported-formats {
+            text-align: center;
+            margin-top: 20px;
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Requirements Generator</h1>
+            <p>Анализ C/C++ файлов и генерация требований в Excel</p>
+        </div>
+
+        <div class="nav">
+            <a href="/" class="active">Главная</a>
+            <a href="/rag-chat">RAG Чат</a>
+            <a href="/add-document">Добавить документ</a>
+        </div>
+        
+        <div class="content">
+            <div class="upload-area" id="uploadArea">
+                <div class="upload-icon">📁</div>
+                <h3>Перетащите C-файл сюда</h3>
+                <p>или</p>
+                <button class="browse-btn" onclick="document.getElementById('fileInput').click()">
+                    Выберите файл
+                </button>
+                <input type="file" id="fileInput" class="file-input" accept=".c,.cpp,.h,.hpp">
+            </div>
+            
+            <div class="file-info" id="fileInfo">
+                <strong>Выбранный файл:</strong> 
+                <span id="fileName"></span>
+                <br>
+                <small>Размер: <span id="fileSize"></span></small>
+            </div>
+            
+            <button class="analyze-btn" id="analyzeBtn" disabled onclick="analyzeFile()">
+                Начать анализ
+            </button>
+            
+            <div class="status-area" id="statusArea">
+                <div id="statusContent"></div>
+            </div>
+            
+            <div class="supported-formats">
+                Поддерживаемые форматы: .c, .cpp, .h, .hpp<br>
+                Кодировка: CP1251/ANSI или UTF-8
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const fileInfo = document.getElementById('fileInfo');
+        const fileName = document.getElementById('fileName');
+        const fileSize = document.getElementById('fileSize');
+        const analyzeBtn = document.getElementById('analyzeBtn');
+        const statusArea = document.getElementById('statusArea');
+        const statusContent = document.getElementById('statusContent');
+        
+        let currentFile = null;
+        
+        // Обработчики drag & drop
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            uploadArea.addEventListener(eventName, preventDefaults, false);
+        });
+        
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        
+        ['dragenter', 'dragover'].forEach(eventName => {
+            uploadArea.addEventListener(eventName, highlight, false);
+        });
+        
+        ['dragleave', 'drop'].forEach(eventName => {
+            uploadArea.addEventListener(eventName, unhighlight, false);
+        });
+        
+        function highlight() {
+            uploadArea.classList.add('dragover');
+        }
+        
+        function unhighlight() {
+            uploadArea.classList.remove('dragover');
+        }
+        
+        uploadArea.addEventListener('drop', handleDrop, false);
+        
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            handleFiles(files);
+        }
+        
+        fileInput.addEventListener('change', function() {
+            handleFiles(this.files);
+        });
+        
+        function handleFiles(files) {
+            if (files.length > 0) {
+                const file = files[0];
+                if (isValidFileType(file)) {
+                    currentFile = file;
+                    displayFileInfo(file);
+                    analyzeBtn.disabled = false;
+                } else {
+                    showStatus('error', 'Пожалуйста, выберите файл с расширением .c, .cpp, .h или .hpp');
+                    resetFileSelection();
+                }
+            }
+        }
+        
+        function isValidFileType(file) {
+            const validExtensions = ['.c', '.cpp', '.h', '.hpp'];
+            const fileName = file.name.toLowerCase();
+            return validExtensions.some(ext => fileName.endsWith(ext));
+        }
+        
+        function displayFileInfo(file) {
+            fileName.textContent = file.name;
+            fileSize.textContent = formatFileSize(file.size);
+            fileInfo.style.display = 'block';
+        }
+        
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+        
+        function resetFileSelection() {
+            currentFile = null;
+            fileInput.value = '';
+            fileInfo.style.display = 'none';
+            analyzeBtn.disabled = true;
+        }
+        
+        async function analyzeFile() {
+            if (!currentFile) return;
+            
+            analyzeBtn.disabled = true;
+            analyzeBtn.textContent = '⏳ Анализ...';
+            
+            const formData = new FormData();
+            formData.append('file', currentFile);
+            
+            showStatus('processing', `
+                <div class="spinner"></div>
+                <h3>Анализ файла...</h3>
+                <p>Идет обработка ${currentFile.name}</p>
+                <p>Это может занять несколько минут</p>
+            `);
+            
+            try {
+                const response = await fetch('/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    showStatus('success', `
+                        <h3>✅ Анализ завершен!</h3>
+                        <p>Файл успешно проанализирован</p>
+                        <a href="/download/${result.file_id}" class="download-btn">
+                            📥 Скачать Excel с требованиями
+                        </a>
+                    `);
+                } else {
+                    throw new Error(result.detail || 'Произошла ошибка');
+                }
+            } catch (error) {
+                showStatus('error', `
+                    <h3>❌ Ошибка</h3>
+                    <p>${error.message}</p>
+                    <button class="browse-btn" onclick="resetAnalysis()">Попробовать снова</button>
+                `);
+            }
+            
+            analyzeBtn.disabled = false;
+            analyzeBtn.textContent = 'Начать анализ';
+        }
+        
+        function showStatus(type, content) {
+            statusArea.className = 'status-area status-' + type;
+            statusContent.innerHTML = content;
+            statusArea.style.display = 'block';
+        }
+        
+        function resetAnalysis() {
+            resetFileSelection();
+            statusArea.style.display = 'none';
+        }
+    </script>
+</body>
+</html>
+[file content end]

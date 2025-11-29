@@ -1,0 +1,242 @@
+<!-- templates/index.html -->
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Requirements Generator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #fafafa 0%, #a24b4f 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #bc0000 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.8em;
+            margin-bottom: 15px;
+        }
+        
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.5;
+        }
+        
+        .nav {
+            background: #34495e;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .nav a {
+            color: white;
+            text-decoration: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            transition: all 0.3s;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .nav a:hover {
+            background: rgba(255,255,255,0.15);
+            transform: translateY(-2px);
+        }
+        
+        .nav a.active {
+            background: #bc0000;
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+        }
+        
+        .content {
+            padding: 50px 40px;
+            text-align: center;
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin: 40px 0;
+        }
+        
+        .feature-card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: 1px solid #e9ecef;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+        }
+        
+        .feature-icon {
+            font-size: 3.5em;
+            margin-bottom: 20px;
+        }
+        
+        .feature-card h3 {
+            font-size: 1.4em;
+            margin-bottom: 15px;
+            color: #2c3e50;
+        }
+        
+        .feature-card p {
+            color: #7f8c8d;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        
+        .feature-btn {
+            background: #bc0000;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: background 0.3s;
+            font-weight: 500;
+        }
+        
+        .feature-btn:hover {
+            background: #2980b9;
+        }
+        
+        .welcome-text {
+            font-size: 1.1em;
+            color: #5a6c7d;
+            line-height: 1.7;
+            max-width: 800px;
+            margin: 0 auto 40px;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-top: 50px;
+            flex-wrap: wrap;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #bc0000;
+            display: block;
+        }
+        
+        .stat-label {
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+        
+        @media (max-width: 768px) {
+            .nav {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .nav a {
+                width: 200px;
+                justify-content: center;
+            }
+            
+            .features {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2.2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔍 Requirements Generator</h1>
+            <p>Комплексное решение для анализа кода, генерации требований и интеллектуального поиска по документации</p>
+        </div>
+        
+        <div class="nav">
+            <a href="/" class="active">Главная</a>
+            <a href="/analyze">Анализ C/C++ кода</a>
+            <a href="/rag-chat">RAG Чат</a>
+            <a href="/add-document">Добавить документ</a>
+        </div>
+        
+        <div class="content">
+            <div class="welcome-text">
+                <h2>Добро пожаловать в Requirements Generator!</h2>
+                <p>Это мощный инструмент для автоматизации процесса разработки требований. 
+                Используйте различные модули системы для анализа исходного кода, поиска информации 
+                в документации и генерации качественных требований.</p>
+            </div>
+            
+            <div class="features">
+                <div class="feature-card">
+                    <div class="feature-icon"></div>
+                    <h3>Анализ C/C++ кода</h3>
+                    <p>Автоматический анализ исходных файлов на C/C++ и генерация Excel-таблиц с требованиями к функциональности</p>
+                    <a href="/analyze" class="feature-btn">Перейти к анализу</a>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon"></div>
+                    <h3>RAG Чат</h3>
+                    <p>Интеллектуальный помощник, который отвечает на вопросы на основе документов в вашей базе знаний</p>
+                    <a href="/rag-chat" class="feature-btn">Открыть чат</a>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon"></div>
+                    <h3>Управление документами</h3>
+                    <p>Добавляйте документы в векторную базу знаний для улучшения качества ответов RAG системы</p>
+                    <a href="/add-document" class="feature-btn">Добавить документ</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
