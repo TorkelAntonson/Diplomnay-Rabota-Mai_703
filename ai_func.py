@@ -1,11 +1,9 @@
-from typing import Optional
+from typing import List, Dict, Optional
 import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM, GenerationConfig
 
 import chromadb
-from chromadb.config import Settings
 import hashlib
-from typing import List, Dict, Optional
 import PyPDF2
 import docx
 

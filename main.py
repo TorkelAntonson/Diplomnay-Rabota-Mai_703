@@ -1,7 +1,6 @@
 # main.py
 from fastapi import FastAPI, UploadFile, File, HTTPException, Form, Request
 from fastapi.responses import FileResponse
-from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 import os
 import uuid
@@ -20,8 +19,6 @@ os.makedirs(UPLOAD_DIR, exist_ok=True)
 os.makedirs(RESULTS_DIR, exist_ok=True)
 os.makedirs(DOCUMENTS_DIR, exist_ok=True)
 
-# Монтируем статические файлы
-app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 
 # Кастомный системный промпт

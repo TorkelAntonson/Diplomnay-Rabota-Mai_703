@@ -113,16 +113,6 @@ def analyze_c_file_to_excel(c_file_path: str, output_dir: str = None,
                 'is_requirement': 'нет'
             },
             {
-                'element': 'Входной поток',
-                'value': ', '.join(func['globals_used']) if func['globals_used'] else 'нет',
-                'is_requirement': 'нет'
-            },
-            {
-                'element': 'Выходной поток', 
-                'value': ', '.join(func['globals_written']) if func['globals_written'] else 'нет',
-                'is_requirement': 'нет'
-            },
-            {
                 'element': 'Используемые константы',
                 'value': ', '.join(func['constants']) if func['constants'] else 'нет',
                 'is_requirement': 'нет'
